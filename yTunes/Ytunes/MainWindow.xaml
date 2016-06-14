@@ -1,0 +1,418 @@
+﻿<Window x:Class="Ytunes.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local ="clr-namespcae:Ytunes"
+        WindowStyle="None"
+        AllowsTransparency="True" Background="Transparent" OpacityMask="White"
+        Title="yTunes" Icon="Sources/IMG_1862_icon.jpg"
+        Height="500" Width="275" ResizeMode="NoResize" 
+        MouseLeftButtonDown="Window_MouseLeftButtonDown">
+
+    <Window.Resources>
+
+        <ContextMenu x:Key="ContextMenu">
+            <MenuItem Header="从列表中移除" Click="deleteSong_Click" />
+        </ContextMenu> 
+
+        <ControlTemplate TargetType="Button" x:Key="modeButtonTemplate">
+            <Image Source="/Sources/随机.png" />
+        </ControlTemplate>
+        <ControlTemplate TargetType="Button" x:Key="preButtonTemplate">
+            <Image Source="/Sources/上一曲.png" />
+        </ControlTemplate>
+        <ControlTemplate TargetType="Button" x:Key="nextButtonTemplate">
+            <Image Source="/Sources/下一曲.png" />
+        </ControlTemplate>
+        
+        <Style x:Key="SliderRepeatButtonStyle" TargetType="{x:Type RepeatButton}">
+            <Setter Property="OverridesDefaultStyle" Value="true"/>
+            <Setter Property="IsTabStop" Value="false"/>
+            <Setter Property="Focusable" Value="false"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type RepeatButton}">
+                        <Rectangle Fill="Transparent"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="HorizontalSliderThumbStyle" TargetType="{x:Type Thumb}">
+
+            <Setter Property="Focusable" Value="false"/>
+
+            <Setter Property="OverridesDefaultStyle" Value="true"/>
+
+            <Setter Property="Height" Value="10"/>
+
+            <Setter Property="Width" Value="10"/>
+
+            <Setter Property="Foreground" Value="Gray"/>
+
+            <Setter Property="Template">
+
+                <Setter.Value>
+
+                    <ControlTemplate TargetType="{x:Type Thumb}">
+
+                        <Ellipse Fill="#FFAED1ED" Stroke="#FF5E5D5D" StrokeThickness="0.8" />
+
+                    </ControlTemplate>
+
+                </Setter.Value>
+
+            </Setter>
+
+        </Style>
+        <Style x:Key="SliderStyle" TargetType="{x:Type Slider}">
+            <Setter Property="Stylus.IsPressAndHoldEnabled" Value="false"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="#FFC4C4C4"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Slider}">
+                        <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" SnapsToDevicePixels="true">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto" MinHeight="{TemplateBinding MinHeight}"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <TickBar x:Name="TopTick" Fill="{TemplateBinding Foreground}" Height="4" Placement="Top" Grid.Row="0" Visibility="Collapsed"/>
+                                <TickBar x:Name="BottomTick" Fill="{TemplateBinding Foreground}" Height="4" Placement="Bottom" Grid.Row="2" Visibility="Collapsed"/>
+                                <Border x:Name="TrackBackground"  CornerRadius="1" Height="5.0" Margin="5,0" Grid.Row="1" VerticalAlignment="center">
+                                    <Grid>
+                                        <Border Background="#FFF7F4F4" CornerRadius="0.5" Opacity="0.215"/>
+                                        <Border Background="#FF132E50" CornerRadius="0.5" Margin="0,0,0.3,0.3" Opacity="0.715"/>
+                                    </Grid>
+                                </Border>
+                                <Track x:Name="PART_Track" Grid.Row="1">
+                                    <Track.DecreaseRepeatButton>
+                                        <RepeatButton Command="{x:Static Slider.DecreaseLarge}" Style="{StaticResource SliderRepeatButtonStyle}"/>
+                                    </Track.DecreaseRepeatButton>
+                                    <Track.IncreaseRepeatButton>
+                                        <RepeatButton Command="{x:Static Slider.IncreaseLarge}" Style="{StaticResource SliderRepeatButtonStyle}"/>
+                                    </Track.IncreaseRepeatButton>
+                                    <Track.Thumb>
+                                        <Thumb x:Name="Thumb" Style="{StaticResource HorizontalSliderThumbStyle}"/>
+                                    </Track.Thumb>
+                                </Track>
+                            </Grid>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        
+        <Style x:Key="ScrollBarThumb"
+           TargetType="{x:Type Thumb}">
+            <Setter Property="OverridesDefaultStyle"
+                Value="true"/>
+            <Setter Property="IsTabStop"
+                Value="false"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Thumb}">
+                        <Grid>
+                            <Rectangle Stroke="#D1D1D1" RadiusX="2" RadiusY="2">
+                                <Rectangle.Fill>
+                                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                        <GradientStop Color="#FFFFFF" Offset="0" />
+                                        <GradientStop Color="#EEEEEE" Offset="1" />
+                                    </LinearGradientBrush>
+                                </Rectangle.Fill>
+                            </Rectangle>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="HorizontalScrollBarPageButton"
+           TargetType="{x:Type RepeatButton}">
+            <Setter Property="OverridesDefaultStyle"
+                Value="true"/>
+            <Setter Property="Background"
+                Value="Transparent"/>
+            <Setter Property="Focusable"
+                Value="false"/>
+            <Setter Property="IsTabStop"
+                Value="false"/>
+            <Setter Property="Opacity"
+                Value="12"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type RepeatButton}">
+                        <Rectangle Fill="{TemplateBinding Background}"
+                               Width="{TemplateBinding Width}"
+                               Height="{TemplateBinding Height}"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="VerticalScrollBarPageButton"
+           TargetType="{x:Type RepeatButton}">
+            <Setter Property="OverridesDefaultStyle"
+                Value="true"/>
+            <Setter Property="Background"
+                Value="Transparent">
+
+            </Setter>
+            <Setter Property="Focusable"
+                Value="False"/>
+            <Setter Property="IsTabStop"
+                Value="False"/>
+            <Setter Property="Opacity"
+                Value="12"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type RepeatButton}">
+                        <Border Width="2">
+                            <Border.Background>
+                                <!--线条图片做背景-->
+                                <ImageBrush ImageSource="/Sources/滚动条.png" Stretch="Fill" TileMode="FlipX"   />
+                            </Border.Background>
+                        </Border>
+                        <!--<Rectangle Fill="{TemplateBinding Background}"-->
+                        <!--Width="{TemplateBinding Width}"-->
+                        <!--Height="{TemplateBinding Height}"/>-->
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="for_scrollbar"
+           TargetType="{x:Type ScrollBar}">
+            <Setter Property="Stylus.IsPressAndHoldEnabled"
+                Value="False"/>
+            <Setter Property="Stylus.IsFlicksEnabled"
+                Value="False"/>
+            <Setter Property="Background"
+                Value="#F3F3F3"/>
+            <Setter Property="Margin"
+                Value="0,1,1,6"/>
+            <Setter Property="Width"
+                Value="10"/>
+            <Setter Property="MinWidth"
+                Value="5"/>
+            <Setter Property="Opacity"
+                Value="1"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ScrollBar}">
+                        <Grid x:Name="Bg" SnapsToDevicePixels="true">
+                            <Track x:Name="PART_Track"
+                               IsEnabled="{TemplateBinding IsMouseOver}"
+                               IsDirectionReversed="true">
+                                <Track.DecreaseRepeatButton>
+                                    <RepeatButton
+                                    Style="{StaticResource VerticalScrollBarPageButton}"
+                                    Command="{x:Static ScrollBar.PageUpCommand}"/>
+                                </Track.DecreaseRepeatButton>
+                                <Track.IncreaseRepeatButton>
+                                    <RepeatButton
+                                    Style="{StaticResource VerticalScrollBarPageButton}"
+                                    Command="{x:Static ScrollBar.PageDownCommand}"/>
+                                </Track.IncreaseRepeatButton>
+                                <Track.Thumb>
+                                    <Thumb Style="{StaticResource ScrollBarThumb}"/>
+                                </Track.Thumb>
+                            </Track>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="Orientation"
+                     Value="Horizontal">
+                    <Setter Property="Background"
+                        Value="Transparent"/>
+                    <Setter Property="Margin"
+                        Value="1,0,6,1"/>
+                    <Setter Property="Height"
+                        Value="5"/>
+                    <Setter Property="MinHeight"
+                        Value="5"/>
+                    <Setter Property="Width"
+                        Value="Auto"/>
+                    <Setter Property="Opacity"
+                        Value="0"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type ScrollBar}">
+                                <Grid x:Name="Bg" SnapsToDevicePixels="true">
+                                    <Track x:Name="PART_Track"
+                                       IsEnabled="{TemplateBinding IsMouseOver}">
+                                        <Track.DecreaseRepeatButton>
+                                            <RepeatButton Style="{StaticResource HorizontalScrollBarPageButton}"
+                                                      Command="{x:Static ScrollBar.PageLeftCommand}"/>
+                                        </Track.DecreaseRepeatButton>
+                                        <Track.IncreaseRepeatButton>
+                                            <RepeatButton Style="{StaticResource HorizontalScrollBarPageButton}"
+                                                      Command="{x:Static ScrollBar.PageRightCommand}"/>
+                                        </Track.IncreaseRepeatButton>
+                                        <Track.Thumb>
+                                            <Thumb Style="{StaticResource ScrollBarThumb}"/>
+                                        </Track.Thumb>
+                                    </Track>
+                                </Grid>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="for_scrollviewer"
+           TargetType="{x:Type ScrollViewer}">
+            <Setter Property="BorderBrush"
+                Value="LightGray"/>
+            <Setter Property="BorderThickness"
+                Value="0"/>
+            <Setter Property="HorizontalContentAlignment"
+                Value="Left"/>
+            <Setter Property="HorizontalScrollBarVisibility"
+                Value="Auto"/>
+            <Setter Property="VerticalContentAlignment"
+                Value="Top"/>
+            <Setter Property="VerticalScrollBarVisibility"
+                Value="Auto"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ScrollViewer}">
+                        <Border BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            SnapsToDevicePixels="True">
+                            <Grid Background="{TemplateBinding Background}">
+                                <ScrollContentPresenter
+                                Cursor="{TemplateBinding Cursor}"
+                                Margin="{TemplateBinding Padding}"
+                                ContentTemplate="{TemplateBinding ContentTemplate}"/>
+                                <ScrollBar x:Name="PART_VerticalScrollBar"
+                                       HorizontalAlignment="Right"
+                                       Maximum="{TemplateBinding ScrollableHeight}"
+                                       Orientation="Vertical"
+                                       Style="{StaticResource for_scrollbar}"
+                                       ViewportSize="{TemplateBinding ViewportHeight}"
+                                       Value="{TemplateBinding VerticalOffset}"
+                                       Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}"/>
+                                <ScrollBar x:Name="PART_HorizontalScrollBar"
+                                       Maximum="{TemplateBinding ScrollableWidth}"
+                                       Orientation="Horizontal"
+                                       Style="{StaticResource for_scrollbar}"
+                                       VerticalAlignment="Bottom"
+                                       Value="{TemplateBinding HorizontalOffset}"
+                                       ViewportSize="{TemplateBinding ViewportWidth}"
+                                       Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}"/>
+                            </Grid>
+                        </Border>
+
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="ListBoxStyle1" TargetType="ListBox">
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
+            <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListBox">
+                        <Border Name="Border" BorderThickness="10" CornerRadius="2">
+                            <ScrollViewer  x:Name="ScrollViewer" Padding="{TemplateBinding Padding}"  
+                                          Style="{StaticResource for_scrollviewer}">
+                                <ItemsPresenter />
+                            </ScrollViewer>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+    
+    <Grid>
+        <Border CornerRadius="20,20,20,20" >
+            <Border.Background>
+                <ImageBrush ImageSource="Sources/IMG_1862_fixed.png" />
+            </Border.Background>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="28" />
+                    <RowDefinition Height="35" />
+                    <RowDefinition Height="35" />
+                    <RowDefinition Height="300" />
+                    <RowDefinition Height="40" />
+                    <RowDefinition Height="35" />
+                </Grid.RowDefinitions>
+                <StackPanel Orientation="Horizontal" >
+                    <TextBlock x:Name="title" Text="yTunes" Width="170" Foreground="Cornsilk"  FontSize="12" Margin="14,8,5,5"/>
+                    <StackPanel  HorizontalAlignment="Right"/>
+                    <Button Name="simpleModeWindowButton" Margin="2,5,3,5" Background="{x:Null}" BorderBrush="{x:Null}" Click="simpleModeWindowButton_Click"  >
+                        <Image Source="Sources/箭头.png" />
+                    </Button>
+                    <Button Name="smallWindowButton" Margin="2,5,2,5" Background="{x:Null}" BorderBrush="{x:Null}" Click="smallWindowButton_Click" >
+                        <Image Source="Sources/最小化.png" />
+                    </Button>
+                    <Button Name="shutDownButton" Margin="4,5,5,5" Background="{x:Null}" BorderBrush="{x:Null}" Click="shutDownButton_Click" >
+                        <Image Source="Sources/关闭.png" />
+                    </Button>
+                </StackPanel>
+                <StackPanel Grid.Row="1" Orientation="Horizontal">
+                    <TextBlock x:Name="songName" FontSize="14" Text="暂无播放曲目..." Margin="17,2,5,2" Foreground="#FFEEC7"
+                               VerticalAlignment="Center" HorizontalAlignment="Left" Width="240"
+                               FontFamily="Comic Sans MS,Microsoft JhengHei" TextWrapping="Wrap"/>
+                    <TextBlock Name="A" />
+                </StackPanel>
+                <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <TextBlock Name="posTextBlock" Text="00:00" Foreground="#FFEEC7" FontSize="10" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <Slider x:Name="songProcess" Style="{StaticResource SliderStyle}" Maximum="1" Width="180" Margin="10,11" MouseMove="songProcess_MouseMove"/>
+                    <TextBlock Name="durTextBlock" Text="00:00" Foreground="#FFEEC7" FontSize="10" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </StackPanel>
+                <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button Name="addButton" Margin="2,4,2,4" Background="{x:Null}" BorderBrush="{x:Null}" Click="addButton_Click">
+                        <Image Source="/Sources/添加.png" />
+                    </Button>
+                    <Button Name="addFromDirectoryButton" Margin="2,4,2,4" Background="{x:Null}" BorderBrush="{x:Null}" Click="addFromDirectoryButton_Click">
+                        <Image Source="/Sources/文件夹.png" />
+                    </Button>
+                    <Button x:Name="modeButton"  Margin="2,4,3,4" Click="modeButton_Click" Background="{x:Null}" BorderBrush="{x:Null}">
+                        <Image Source="/Sources/顺序.png" />
+                    </Button>
+                    <Image Source="/Sources/音量.png" Margin="1,5,1,5"/>
+                    <Slider Name="volumnSlider" Style="{StaticResource SliderStyle}" Value="1" Maximum="1" Width="75" Margin="5,12,15,12"
+                            ValueChanged="volumnSlider_ValueChanged" MouseLeftButtonDown="volumnSlider_MouseLeftButtonDown" Focusable="False"/>
+                </StackPanel>
+                <StackPanel Grid.Row="3">
+
+                    <ListBox ContextMenu="{StaticResource ContextMenu}" Name="list" Margin="10,5,10,5" HorizontalAlignment="Left" VerticalAlignment="Top"
+                             Height="285" Width="255" MouseDoubleClick="list_MouseDoubleClick" 
+                             Foreground="Cornsilk" Background="{x:Null}" Focusable="False" BorderBrush="{x:Null}"
+                             Style="{StaticResource ListBoxStyle1}" >
+
+                        <!--
+                        
+                        <ListBox.ItemContainerStyle>
+                            <Style TargetType="ListBoxItem">
+                                <Style.Triggers>
+                                    <Trigger Property="Tag" Value="1">
+                                        <Setter Property="Foreground" Value="#FFEEC7"/>
+                                    </Trigger>
+                                    <Trigger Property="Tag" Value="0">
+                                        <Setter Property="Foreground" Value="Cornsilk"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ListBox.ItemContainerStyle>
+                    -->
+                    </ListBox>
+                </StackPanel>
+                <Grid Grid.Row="5" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <StackPanel Orientation="Horizontal">
+                        <Button x:Name="preButton" Template="{StaticResource preButtonTemplate}" Margin="1,5,3,5" Click="preButton_Click"/>
+                        <Button x:Name="playButton" Margin="10,3,10,3" Click="playButton_Click" IsEnabled="True" Background="{x:Null}" BorderBrush="{x:Null}">
+                            <Image Source="/Sources/暂停.png" />
+                        </Button>
+                        <Button x:Name="nextButton" Template="{StaticResource nextButtonTemplate}" Margin="1,5,3,5" Click="nextButton_Click"/>
+
+                    </StackPanel>
+                </Grid>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

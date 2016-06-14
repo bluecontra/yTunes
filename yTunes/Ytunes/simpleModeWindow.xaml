@@ -1,0 +1,36 @@
+﻿<Window x:Class="Ytunes.simpleModeWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        WindowStyle="None" 
+        AllowsTransparency="True" Background="Transparent" OpacityMask="White"
+        Title="yTunes_S" Icon="Sources/IMG_1862_icon.jpg"
+        Height="40" Width="220" MouseLeftButtonDown="Window_MouseLeftButtonDown" >
+    <Grid>
+        <Border CornerRadius="10,10,10,10" >
+            <Border.Background>
+                <ImageBrush ImageSource="Sources/IMG_1862_simpleMode.png" />
+            </Border.Background>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Name="songName" FontSize="12" Margin="7,5,5,5" Width="100" VerticalAlignment="Center"
+                           FontFamily="Comic Sans MS,Microsoft JhengHei" TextWrapping="NoWrap"
+                           Foreground="#FFEEC7" Text="未播放歌曲..."/>
+                <Button x:Name="preButton"  Margin="1,7,0,7"  
+                        Background="{x:Null}" BorderBrush="{x:Null}" Click="preButton_Click" >
+                    <Image Source="/Sources/上一曲.png" />
+                </Button>
+                    
+                <Button x:Name="playButton" Margin="1,7,0,7"  IsEnabled="True" 
+                        Background="{x:Null}" BorderBrush="{x:Null}" Click="playButton_Click" >
+                    <Image Source="/Sources/暂停.png" />
+                </Button>
+                <Button x:Name="nextButton" Margin="1,7,0,7" 
+                        Background="{x:Null}" BorderBrush="{x:Null}" Click="nextButton_Click" >
+                    <Image Source="/Sources/下一曲.png" />
+                </Button>
+                <Button Name="backWindowButton" Margin="1,9,3,9" Background="{x:Null}" BorderBrush="{x:Null}" Click="backWindowButton_Click" >
+                    <Image Source="Sources/箭头.png" />
+                </Button>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>
